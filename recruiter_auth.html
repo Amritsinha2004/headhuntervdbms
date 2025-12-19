@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiter Login | TalentScout</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Admin Theme: Navy & Saffron */
+            --primary: #000080; /* Navy Base */
+            --primary-dark: #000050;
+            --secondary: #FF9933; /* Deep Saffron */
+            --bg: #f4f6f9; 
+            --white: #ffffff; 
+            --text: #2c3e50;
+            --radius: 12px;
+        }
+        
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif; background-color: var(--bg);
+            margin: 0; padding: 0; height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            background-image: radial-gradient(var(--primary) 0.5px, transparent 0.5px), radial-gradient(var(--primary) 0.5px, var(--bg) 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
+        .container {
+            background: var(--white); width: 100%; max-width: 420px; padding: 2.5rem;
+            border-radius: var(--radius); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            border-top: 5px solid var(--primary);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; }
+        .logo span { color: var(--secondary); }
+        .portal-name { color: var(--primary); font-weight: 600; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2rem; }
+        
+        .tabs { display: flex; margin-bottom: 2rem; border-bottom: 1px solid #eee; }
+        .tab { flex: 1; padding: 1rem; cursor: pointer; color: #aaa; font-weight: 600; transition: all 0.2s; }
+        .tab:hover { color: var(--primary); }
+        .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+
+        .form-group { margin-bottom: 1.2rem; text-align: left; }
+        .form-group label { display: block; font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600; color: #555; }
+        input {
+            width: 100%; padding: 0.9rem; border: 1px solid #ddd; border-radius: 6px;
+            font-family: inherit; font-size: 0.95rem; transition: border 0.2s;
+        }
+        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 0, 128, 0.1); }
+
+        .btn {
+            width: 100%; padding: 0.9rem; background: var(--primary); color: white;
+            border: none; border-radius: 6px; font-weight: 600; cursor: pointer;
+            margin-top: 1rem; transition: background 0.2s; font-size: 1rem;
+        }
+        .btn:hover { background: var(--primary-dark); }
+        .btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .form-box { display: none; animation: fadeIn 0.3s ease-out; }
+        .form-box.active { display: block; }
+        
+        #error-msg { 
+            background: #ffebee; color: #c62828; padding: 10px; border-radius: 4px;
+            font-size: 0.9rem; margin-top: 1rem; display: none; text-align: left; border-left: 3px solid #c62828;
+        }
+        #success-msg { 
+            background: #e8f5e9; color: #2e7d32; padding: 10px; border-radius: 4px;
+            font-size: 0.9rem; margin-top: 1rem; display: none; text-align: left; border-left: 3px solid #2e7d32;
+        }
+        
+        .back-link {
+            display: block; margin-top: 2rem; font-size: 0.9rem; color: #888; text-decoration: none;
+        }
+        .back-link:hover { color: var(--primary); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="logo">Talent<span>Scout</span></div>
+        <div class="portal-name">Recruiter Portal</div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('login')">Login</div>
+            <div class="tab" onclick="switchTab('signup')">Sign Up</div>
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div id="login-form" class="form-box active">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="l_username" placeholder="Enter admin username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="l_password" placeholder="Enter password">
+            </div>
+            <button class="btn" onclick="handleLogin()" id="loginBtn">Access Dashboard</button>
+        </div>
+
+        <!-- SIGNUP FORM -->
+        <div id="signup-form" class="form-box">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="s_fullname" placeholder="Recruiter Name">
+            </div>
+            <div class="form-group">
+                <label>Choose Username</label>
+                <input type="text" id="s_username" placeholder="admin_user">
+            </div>
+            <div class="form-group">
+                <label>Create Password</label>
+                <input type="password" id="s_password" placeholder="Min. 6 characters">
+            </div>
+            <!-- Role is hidden/hardcoded -->
+            <button class="btn" onclick="handleSignup()" id="signupBtn">Register as Recruiter</button>
+        </div>
+
+        <div id="error-msg"></div>
+        <div id="success-msg"></div>
+        
+        <a href="index.html" class="back-link">← Back to Home</a>
+    </div>
+
+    <script>
+        // Use IP detection for Network access
+        let API_BASE = "http://127.0.0.1:8080";
+        if (window.location.protocol.startsWith('http')) {
+            API_BASE = `${window.location.protocol}//${window.location.hostname}:8080`;
+        }
+
+        // --- TABS ---
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.form-box').forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.querySelector('.tabs .tab:nth-child(1)').classList.add('active');
+                document.getElementById('login-form').classList.add('active');
+            } else {
+                document.querySelector('.tabs .tab:nth-child(2)').classList.add('active');
+                document.getElementById('signup-form').classList.add('active');
+            }
+            hideMessages();
+        }
+
+        function hideMessages() {
+            document.getElementById('error-msg').style.display = 'none';
+            document.getElementById('success-msg').style.display = 'none';
+        }
+
+        function showMessage(msg, type) {
+            hideMessages();
+            const el = document.getElementById(type === 'error' ? 'error-msg' : 'success-msg');
+            el.textContent = msg;
+            el.style.display = 'block';
+        }
+
+        // --- LOGIN ---
+        async function handleLogin() {
+            const btn = document.getElementById('loginBtn');
+            const username = document.getElementById('l_username').value;
+            const password = document.getElementById('l_password').value;
+
+            if (!username || !password) {
+                showMessage("Please enter both username and password.", "error");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Verifying...";
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.detail || "Login failed");
+
+                // Role Guard: Ensure this is actually an admin
+                if (data.role !== 'admin') {
+                    throw new Error("Access Denied: This portal is for Recruiters/Admins only.");
+                }
+
+                // Save Session
+                localStorage.setItem("token", data.access_token);
+                localStorage.setItem("user_role", data.role);
+                localStorage.setItem("user_name", data.name);
+
+                showMessage("Login Successful! Redirecting...", "success");
+
+                // --- CRITICAL FIX: Redirect to admin.html instead of index.html ---
+                setTimeout(() => {
+                    window.location.href = 'admin.html'; 
+                }, 1000);
+
+            } catch (error) {
+                showMessage(error.message, "error");
+                btn.disabled = false;
+                btn.textContent = "Access Dashboard";
+            }
+        }
+
+        // --- SIGNUP ---
+        async function handleSignup() {
+            const btn = document.getElementById('signupBtn');
+            const data = {
+                full_name: document.getElementById('s_fullname').value,
+                username: document.getElementById('s_username').value,
+                password: document.getElementById('s_password').value,
+                role: 'admin' // HARDCODED
+            };
+
+            if (!data.username || !data.password || !data.full_name) {
+                showMessage("All fields are required.", "error");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Creating Account...";
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) throw new Error(result.detail || "Signup failed");
+
+                showMessage("Account Created! Please Login.", "success");
+                
+                setTimeout(() => {
+                    switchTab('login');
+                    document.getElementById('l_username').value = data.username;
+                    btn.disabled = false;
+                    btn.textContent = "Register as Recruiter";
+                }, 1500);
+
+            } catch (error) {
+                showMessage(error.message, "error");
+                btn.disabled = false;
+                btn.textContent = "Register as Recruiter";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalentScout Enterprise | Welcome</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF9933;
+            --secondary: #138808;
+            --navy: #000080;
+            --bg-body: #f4f6f9;
+            --text-main: #2c3e50;
+            --text-muted: #636e72;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .container {
+            text-align: center;
+            max-width: 900px;
+            width: 100%;
+            padding: 2rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            width: 50px; height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+        }
+
+        .card-container {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .role-card {
+            background: white;
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            width: 350px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-top: 6px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .card-admin { border-top-color: var(--navy); }
+        .card-user { border-top-color: var(--secondary); }
+
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            background: #f8f9fa;
+            width: 80px; height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+        }
+
+        h2 { margin: 0 0 0.5rem 0; color: var(--navy); }
+        p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; }
+
+        .btn-enter {
+            margin-top: 1.5rem;
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .card-admin .btn-enter { background: var(--navy); color: white; }
+        .card-user .btn-enter { background: var(--secondary); color: white; }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="logo">
+            <div class="logo-icon">TS</div>
+            TalentScout Enterprise
+        </div>
+        <div class="subtitle">AI-Powered Recruitment & Talent Acquisition Platform</div>
+
+        <div class="card-container">
+            <!-- ADMIN CARD: Updated to point to recruiter_auth.html -->
+            <a href="recruiter_auth.html" class="role-card card-admin">
+                <div class="icon">💼</div>
+                <h2>Recruiter / Admin</h2>
+                <p>Access the intelligence dashboard to search, filter, and analyze candidate profiles.</p>
+                <span class="btn-enter">Log In to Dashboard &rarr;</span>
+            </a>
+
+            <!-- CANDIDATE CARD: Updated to point to auth_candidate.html -->
+            <a href="auth_candidate.html" class="role-card card-user">
+                <div class="icon">🚀</div>
+                <h2>Candidate / User</h2>
+                <p>Upload your resume or build a digital profile to get discovered by top companies.</p>
+                <span class="btn-enter">Log In to Apply &rarr;</span>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

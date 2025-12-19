@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalentScout Enterprise | Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- 1. CORPORATE DESIGN SYSTEM --- */
+        :root {
+            /* Palette: Corporate India */
+            --primary: #FF9933; /* Deep Saffron (Accents) */
+            --secondary: #138808; /* India Green (Success) */
+            --navy-base: #000080; /* Ashoka Blue (Headers/Sidebar) */
+            --bg-body: #f4f6f9;
+            --bg-card: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #636e72;
+            --border-light: #e0e0e0;
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --radius: 8px;
+        }
+
+        * { box-sizing: border-box; outline: none; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- 2. HEADER --- */
+        header {
+            background-color: var(--navy-base);
+            color: white;
+            padding: 0 2rem;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.5px; display: flex; align-items: center; gap: 12px; text-decoration: none; color: white;}
+        .brand-logo { width: 32px; height: 32px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .user-profile { font-size: 0.9rem; font-weight: 500; opacity: 0.9; background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px; display: flex; align-items: center; gap: 15px;}
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-link:hover { color: white; text-decoration: underline; }
+
+        /* --- 3. MAIN LAYOUT --- */
+        main {
+            flex: 1;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 2rem;
+        }
+
+        /* --- 4. SEARCH PANEL --- */
+        .search-panel {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-md);
+            border-top: 4px solid var(--primary);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .input-group { flex: 1; }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+        input[type="text"]:focus { border-color: var(--navy-base); box-shadow: 0 0 0 3px rgba(0, 0, 128, 0.1); }
+
+        .btn-search {
+            background-color: var(--navy-base);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-search:hover { background-color: #000050; }
+
+        /* --- 5. RESULTS GRID --- */
+        .results-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 1.5rem;
+            align-content: start;
+        }
+
+        .status-msg {
+            grid-column: 1 / -1;
+            text-align: center;
+            /* Default Yellow State for "Processing" */
+            color: #856404;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 1rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.02);
+            border-radius: var(--radius);
+            border: 2px dashed var(--border-light);
+        }
+
+        /* --- 6. CANDIDATE CARD --- */
+        .candidate-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border-left: 5px solid #ccc;
+        }
+        .candidate-card:hover { transform: translateY(-3px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+
+        /* Visual Scoring */
+        .card-high { border-left-color: var(--secondary); }
+        .card-med { border-left-color: var(--primary); }
+        .card-low { border-left-color: #95a5a6; }
+
+        .card-header {
+            padding: 1.2rem;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .file-info h3 { margin: 0; font-size: 1.1rem; color: var(--navy-base); }
+        .file-info span { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+
+        .match-score {
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--text-main);
+        }
+        .match-label { font-size: 0.7rem; color: var(--text-muted); text-align: center; display: block; margin-top: 2px;}
+
+        .card-body { padding: 1.2rem; flex: 1; background: #fafbfc; }
+        .snippet-box {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.5;
+            height: 80px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .card-footer {
+            padding: 1rem 1.2rem;
+            background: white;
+            border-top: 1px solid #f0f0f0;
+            text-align: right;
+        }
+        .btn-view {
+            text-decoration: none;
+            color: var(--navy-base);
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid var(--navy-base);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .btn-view:hover { background: var(--navy-base); color: white; }
+
+        .loader {
+            border: 3px solid #856404;
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            width: 20px; height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="welcome.html" class="brand">
+            <div class="brand-logo">TS</div>
+            <span>TalentScout <span style="font-weight:400; color:#bdc3c7;">Enterprise</span></span>
+        </a>
+        <div class="user-profile">
+            <a href="welcome.html" class="nav-link">Home</a>
+            <span style="opacity: 0.5;">|</span>
+            ADMINISTRATOR
+        </div>
+    </header>
+
+    <main>
+        <!-- SEARCH BAR -->
+        <div class="search-panel">
+            <div class="input-group">
+                <input type="text" id="query" placeholder="Enter job requirements, skills, or titles (e.g. 'Project Manager with Agile')...">
+            </div>
+            <button class="btn-search" onclick="performSearch()" id="searchBtn">Search</button>
+        </div>
+
+        <!-- RESULTS -->
+        <div id="status-area"></div>
+        <div id="results-area" class="results-area">
+            <div class="empty-state">
+                <h3>Admin Search Console</h3>
+                <p>Enter keywords above to query the candidate vector database.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Dynamic Backend Detection
+        let API_BASE = "http://127.0.0.1:8080";
+        if (window.location.protocol.startsWith('http')) {
+            API_BASE = `${window.location.protocol}//${window.location.hostname}:8080`;
+        }
+        console.log("Admin Console connected to:", API_BASE);
+
+        // Enter key to search
+        document.getElementById('query').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        async function performSearch() {
+            const query = document.getElementById('query').value.trim();
+            const container = document.getElementById('results-area');
+            const statusArea = document.getElementById('status-area');
+            const searchBtn = document.getElementById('searchBtn');
+
+            if (!query) return;
+
+            // Loading State (Yellow theme)
+            container.innerHTML = '';
+            statusArea.innerHTML = '<div class="status-msg"><div class="loader"></div> Querying Intelligence Engine...</div>';
+            searchBtn.disabled = true;
+            searchBtn.style.opacity = "0.7";
+
+            try {
+                const response = await fetch(`${API_BASE}/search?query=${encodeURIComponent(query)}`);
+                if (!response.ok) throw new Error("Search failed");
+
+                const data = await response.json();
+                
+                // Success State (Green theme override)
+                statusArea.innerHTML = `<div class="status-msg" style="color:#155724; background-color:#d4edda; border-color:#c3e6cb;">✅ Found ${data.count || 0} candidates matching criteria</div>`;
+                renderResults(data.results);
+
+            } catch (error) {
+                console.error(error);
+                // Error State (Red theme override)
+                statusArea.innerHTML = `<div class="status-msg" style="color:#721c24; background-color:#f8d7da; border-color:#f5c6cb;">❌ Connection Error. Ensure Backend is running.</div>`;
+                container.innerHTML = `<div class="empty-state">System Offline</div>`;
+            } finally {
+                searchBtn.disabled = false;
+                searchBtn.style.opacity = "1";
+            }
+        }
+
+        function renderResults(results) {
+            const container = document.getElementById('results-area');
+            
+            if (!results || results.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No Records Found</h3>
+                        <p>No candidates matched your semantic query.</p>
+                    </div>`;
+                return;
+            }
+
+            results.forEach(item => {
+                let cardClass = "card-low";
+                let scoreColor = "#95a5a6";
+                
+                if (item.score >= 80) { cardClass = "card-high"; scoreColor = "var(--secondary)"; }
+                else if (item.score >= 50) { cardClass = "card-med"; scoreColor = "var(--primary)"; }
+
+                const pdfUrl = `${API_BASE}/pdfs/${encodeURIComponent(item.source)}`;
+
+                const card = document.createElement('div');
+                card.className = `candidate-card ${cardClass}`;
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="file-info">
+                            <h3>${item.source}</h3>
+                            <span>Relevance Score</span>
+                        </div>
+                        <div>
+                            <div class="match-score" style="color:${scoreColor}">${item.score}%</div>
+                            <span class="match-label">MATCH</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="snippet-box">"...${item.text}..."</div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="${pdfUrl}" target="_blank" class="btn-view">👁 View Dossier</a>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
